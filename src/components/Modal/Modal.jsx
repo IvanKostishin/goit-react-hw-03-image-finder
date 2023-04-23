@@ -2,6 +2,7 @@ import './Modal.css';
 import { Component } from 'react';
 import '../../../node_modules/rodal/lib/rodal.css';
 import Rodal from 'rodal';
+import propTypes from 'prop-types';
 
 class Modal extends Component {
   render() {
@@ -17,3 +18,9 @@ class Modal extends Component {
 }
 
 export default Modal;
+Modal.propTypes = {
+  img: propTypes.shape({
+    src: propTypes.string,
+    alt: propTypes.string,
+  }),
+};

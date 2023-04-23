@@ -1,4 +1,5 @@
 import './ImageGalleryItem.css';
+import propTypes from 'prop-types';
 const ImageGalleryItem = ({ url, tags }) => {
   return (
     <li className="ImageGalleryItem">
@@ -7,3 +8,8 @@ const ImageGalleryItem = ({ url, tags }) => {
   );
 };
 export default ImageGalleryItem;
+
+ImageGalleryItem.propTypes = {
+  url: propTypes.string.isRequired,
+  tags: propTypes.string.isRequired,
+};

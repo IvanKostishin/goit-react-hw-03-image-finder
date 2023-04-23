@@ -1,4 +1,5 @@
 import './Searchbar.css';
+import propTypes from 'prop-types';
 const Searchbar = ({ handleChenge, onSubmit, value }) => {
   return (
     <header className="searchbar">
@@ -21,3 +22,8 @@ const Searchbar = ({ handleChenge, onSubmit, value }) => {
   );
 };
 export default Searchbar;
+Searchbar.propTypes = {
+  handleChenge: propTypes.func.isRequired,
+  onSubmit: propTypes.func.isRequired,
+  value: propTypes.string.isRequired,
+};
