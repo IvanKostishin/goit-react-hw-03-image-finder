@@ -13,35 +13,7 @@ class App extends Component {
     query: '',
     currentPage: 1,
     onLoad: false,
-    visible: false,
-    imgModal: {},
-  };
-
-  componentDidMount() {
-    window.addEventListener('click', this.show);
-    window.addEventListener('keydown', this.hide);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('click', this.show);
-  }
-
-  show = event => {
-    if (event.target.nodeName === 'IMG') {
-      this.setState({
-        visible: true,
-        imgModal: { src: event.target.src, alt: event.target.alt },
-      });
-    }
-  };
-
-  hide = () => {
-    this.setState({ visible: false });
-  };
-
-  closeModal = e => {
-    if (e.key === 'Escape') {
-      this.setState({ visible: false });
-    }
+    loadMore: false,
   };
 
   handleChenge = ({ target: { value } }) => {
@@ -56,7 +28,7 @@ class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.state.query.length === 0) {
+    if (this.state.query.trim().length === 0) {
       alert('enter data to search');
       return;
     }
@@ -66,9 +38,15 @@ class App extends Component {
         onLoad: true,
       });
 
-      fetchImages(this.state.query, 1).then(({ hits }) =>
-        this.setState({ images: this.normolizeArreyImg(hits), currentPage: 1 })
-      );
+      fetchImages(this.state.query, 1).then(({ hits }) => {
+        if (hits.length === 12) {
+          this.setState({ loadMore: true });
+        }
+        return this.setState({
+          images: this.normolizeArreyImg(hits),
+          currentPage: 1,
+        });
+      });
     } catch (error) {
       alert(error);
     } finally {
@@ -85,11 +63,16 @@ class App extends Component {
       });
 
       fetchImages(this.state.query, this.state.currentPage + 1).then(
-        ({ hits }) =>
-          this.setState(prevState => ({
+        ({ hits }) => {
+          this.setState({ loadMore: false });
+          if (hits.length === 12) {
+            this.setState({ loadMore: true });
+          }
+          return this.setState(prevState => ({
             images: [...this.state.images, ...this.normolizeArreyImg(hits)],
             currentPage: this.state.currentPage + 1,
-          }))
+          }));
+        }
       );
     } catch (error) {
       alert(error);
@@ -109,16 +92,12 @@ class App extends Component {
         ></Searchbar>
         {this.state.onLoad && <Loader></Loader>}
         {this.state.images[0] && (
-          <>
-            <ImageGallery images={this.state.images}></ImageGallery>
-            <Button onClick={this.hendleClickOnLoadMore}></Button>
-          </>
+          <ImageGallery images={this.state.images}></ImageGallery>
         )}
-        <Modal
-          visible={this.state.visible}
-          onClose={this.hide}
-          img={this.state.imgModal}
-        ></Modal>
+        {this.state.loadMore && (
+          <Button onClick={this.hendleClickOnLoadMore}></Button>
+        )}
+        <Modal></Modal>
       </div>
     );
   }
